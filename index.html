@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,84 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Polynomial Division Examination</title>
 <style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-  background: #f1f5f9;
-  color: #172033;
-}
-.container {
-  max-width: 760px;
-  margin: 25px auto;
-  background: white;
-  padding: 25px;
-  border-radius: 14px;
-  box-shadow: 0 5px 25px #00000012;
-}
-h1 { font-size: 25px; }
-.muted { color: #64748b; }
-button {
-  border: 0;
-  border-radius: 8px;
-  padding: 12px 18px;
-  background: #2563eb;
-  color: white;
-  font-size: 15px;
-  cursor: pointer;
-}
-button:disabled { opacity: .5; }
-.question {
-  padding: 17px 0;
-  border-bottom: 1px solid #e2e8f0;
-}
-.option {
-  display: block;
-  padding: 12px;
-  margin: 8px 0;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.option:has(input:checked) {
-  background: #eff6ff;
-  border-color: #2563eb;
-}
-input { margin-right: 8px; }
-.top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  position: sticky;
-  top: 0;
-  background: white;
-  padding: 12px 0;
-  z-index: 2;
-}
-#timer { font-weight: bold; color: #dc2626; }
-#warning { color: #dc2626; font-weight: bold; }
-.hidden { display: none; }
-.result {
-  background: #f1f5f9;
-  padding: 18px;
-  border-radius: 10px;
-  margin-top: 20px;
-}
-.correct { color: #15803d; }
-.wrong { color: #dc2626; }
+*{box-sizing:border-box}
+body{margin:0;padding:20px;font-family:Arial,sans-serif;background:#f1f5f9;color:#172033}
+.container{max-width:760px;margin:25px auto;background:white;padding:25px;border-radius:14px;box-shadow:0 5px 25px #00000012}
+h1{font-size:25px}
+.muted{color:#64748b}
+button{border:0;border-radius:8px;padding:12px 18px;background:#2563eb;color:white;font-size:15px;cursor:pointer}
+button:disabled{opacity:.5}
+.question{padding:17px 0;border-bottom:1px solid #e2e8f0}
+.option{display:block;padding:12px;margin:8px 0;border:1px solid #cbd5e1;border-radius:8px;cursor:pointer}
+.option:has(input:checked){background:#eff6ff;border-color:#2563eb}
+input{margin-right:8px}
+.name-input{display:block;width:100%;padding:13px;margin:10px 0 18px;border:1px solid #cbd5e1;border-radius:8px;font-size:16px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;background:white;padding:12px 0;z-index:2}
+#timer{font-weight:bold;color:#dc2626}
+#warning{color:#dc2626;font-weight:bold}
+.hidden{display:none}
+.result{background:#f1f5f9;padding:18px;border-radius:10px;margin-top:20px}
+.correct{color:#15803d}
+.wrong{color:#dc2626}
+#saveStatus{font-weight:bold}
 </style>
 </head>
-
 <body>
 <div class="container">
-
 <h1>Polynomial Division Examination</h1>
 <p class="muted">10 Questions | 10 Minutes | 10 Marks</p>
 
 <div id="intro">
+  <h3>Student information</h3>
+  <label for="studentName">Enter your full name:</label>
+  <input class="name-input" id="studentName" type="text" maxlength="80" autocomplete="name" placeholder="Your name">
   <h3>Examination Instructions</h3>
   <ul>
     <li>Choose one answer for every question.</li>
@@ -93,7 +45,8 @@ input { margin-right: 8px; }
     <li>Three recorded violations will automatically submit your examination.</li>
     <li>Your answers cannot be changed after submission.</li>
   </ul>
-  <button onclick="startExam()">Start Examination</button>
+  <button id="startButton" onclick="startExam()">Start Examination</button>
+  <p class="muted">Your name and result will be saved to the teacher's results spreadsheet.</p>
 </div>
 
 <div id="exam" class="hidden">
@@ -111,117 +64,34 @@ input { margin-right: 8px; }
   <div class="result">
     <h1 id="score"></h1>
     <p id="message"></p>
+    <p id="saveStatus" aria-live="polite">Saving your result…</p>
   </div>
   <h3>Answer Review</h3>
   <div id="review"></div>
 </div>
-
 </div>
 
 <script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNeiTlsT_CnZWa1n7Q_rWkrpY8BAqU3Hg5iAKi7U2UC2eVU0cv2CUelNCEYMj7kNOtkw/exec";
+
 const originalQuestions = [
-{
- q:"Divide x² + 3x + 5 by x + 1.",
- o:[
- "Q = x + 2, R = 3",
- "Q = x + 3, R = 2",
- "Q = x + 2, R = 2",
- "Q = x + 1, R = 3"
- ], a:0
-},
-{
- q:"Divide x² + 5x + 7 by x + 2.",
- o:[
- "Q = x + 3, R = 1",
- "Q = x + 2, R = 3",
- "Q = x + 3, R = 2",
- "Q = x + 1, R = 3"
- ], a:0
-},
-{
- q:"Divide x² − 2x + 4 by x − 1.",
- o:[
- "Q = x − 1, R = 2",
- "Q = x − 1, R = 3",
- "Q = x + 1, R = 3",
- "Q = x − 2, R = 4"
- ], a:1
-},
-{
- q:"Divide 2x² + 5x + 8 by x + 2.",
- o:[
- "Q = 2x + 1, R = 6",
- "Q = 2x + 2, R = 4",
- "Q = 2x + 1, R = 5",
- "Q = 2x + 3, R = 2"
- ], a:0
-},
-{
- q:"Divide x² + 4x + 8 by x + 1.",
- o:[
- "Q = x + 3, R = 5",
- "Q = x + 2, R = 6",
- "Q = x + 3, R = 4",
- "Q = x + 4, R = 3"
- ], a:0
-},
-{
- q:"Divide x³ + 2x² + 3x + 5 by x + 1.",
- o:[
- "Q = x² + x + 2, R = 3",
- "Q = x² + x + 3, R = 2",
- "Q = x² + 2x + 1, R = 4",
- "Q = x² + x + 1, R = 4"
- ], a:0
-},
-{
- q:"Divide 2x³ + 3x² − x + 5 by x − 1.",
- o:[
- "Q = 2x² + 5x + 4, R = 9",
- "Q = 2x² + 5x + 4, R = 8",
- "Q = 2x² + 3x + 4, R = 9",
- "Q = 2x² + 5x + 3, R = 8"
- ], a:0
-},
-{
- q:"Divide x³ − 2x² + 4x + 3 by x + 1.",
- o:[
- "Q = x² − 3x + 7, R = −4",
- "Q = x² − 3x + 7, R = 4",
- "Q = x² − x + 3, R = −2",
- "Q = x² − 3x + 6, R = −3"
- ], a:0
-},
-{
- q:"Divide 3x³ + 2x² + 5x + 7 by x − 2.",
- o:[
- "Q = 3x² + 8x + 21, R = 49",
- "Q = 3x² + 8x + 21, R = 50",
- "Q = 3x² + 6x + 17, R = 41",
- "Q = 3x² + 8x + 20, R = 47"
- ], a:0
-},
-{
- q:"Divide x³ + 2x² − 5x + 7 by x − 2.",
- o:[
- "Q = x² + 4x + 3, R = 13",
- "Q = x² + 4x + 3, R = 17",
- "Q = x² + 2x + 3, R = 11",
- "Q = x² + 4x + 2, R = 15"
- ], a:0
-}
+{q:"Divide x² + 3x + 5 by x + 1.",o:["Q = x + 2, R = 3","Q = x + 3, R = 2","Q = x + 2, R = 2","Q = x + 1, R = 3"],a:0},
+{q:"Divide x² + 5x + 7 by x + 2.",o:["Q = x + 3, R = 1","Q = x + 2, R = 3","Q = x + 3, R = 2","Q = x + 1, R = 3"],a:0},
+{q:"Divide x² − 2x + 4 by x − 1.",o:["Q = x − 1, R = 2","Q = x − 1, R = 3","Q = x + 1, R = 3","Q = x − 2, R = 4"],a:1},
+{q:"Divide 2x² + 5x + 8 by x + 2.",o:["Q = 2x + 1, R = 6","Q = 2x + 2, R = 4","Q = 2x + 1, R = 5","Q = 2x + 3, R = 2"],a:0},
+{q:"Divide x² + 4x + 8 by x + 1.",o:["Q = x + 3, R = 5","Q = x + 2, R = 6","Q = x + 3, R = 4","Q = x + 4, R = 3"],a:0},
+{q:"Divide x³ + 2x² + 3x + 5 by x + 1.",o:["Q = x² + x + 2, R = 3","Q = x² + x + 3, R = 2","Q = x² + 2x + 1, R = 4","Q = x² + x + 1, R = 4"],a:0},
+{q:"Divide 2x³ + 3x² − x + 5 by x − 1.",o:["Q = 2x² + 5x + 4, R = 9","Q = 2x² + 5x + 4, R = 8","Q = 2x² + 3x + 4, R = 9","Q = 2x² + 5x + 3, R = 8"],a:0},
+{q:"Divide x³ − 2x² + 4x + 3 by x + 1.",o:["Q = x² − 3x + 7, R = −4","Q = x² − 3x + 7, R = 4","Q = x² − x + 3, R = −2","Q = x² − 3x + 6, R = −3"],a:0},
+{q:"Divide 3x³ + 2x² + 5x + 7 by x − 2.",o:["Q = 3x² + 8x + 21, R = 49","Q = 3x² + 8x + 21, R = 50","Q = 3x² + 6x + 17, R = 41","Q = 3x² + 8x + 20, R = 47"],a:0},
+{q:"Divide x³ + 2x² − 5x + 7 by x − 2.",o:["Q = x² + 4x + 3, R = 13","Q = x² + 4x + 3, R = 17","Q = x² + 2x + 3, R = 11","Q = x² + 4x + 2, R = 15"],a:0}
 ];
 
-let questions = [];
-let answers = {};
-let seconds = 600;
-let violations = 0;
-let timerInterval;
-let submitted = false;
-let started = false;
+let questions=[], answers={}, seconds=600, violations=0, timerInterval;
+let submitted=false, started=false, studentName="";
 
-function shuffle(array) {
-  let a = [...array];
+function shuffle(array){
+  let a=[...array];
   for(let i=a.length-1;i>0;i--){
     let j=Math.floor(Math.random()*(i+1));
     [a[i],a[j]]=[a[j],a[i]];
@@ -229,185 +99,140 @@ function shuffle(array) {
   return a;
 }
 
-function startExam() {
-  if(started) return;
-  started = true;
-
-  questions = shuffle(originalQuestions).map(q=>{
-    const options = shuffle(q.o.map((text,index)=>({
-      text, correct:index===q.a
-    })));
-    return {
-      q:q.q,
-      o:options.map(x=>x.text),
-      a:options.findIndex(x=>x.correct)
-    };
+function startExam(){
+  if(started)return;
+  const nameField=document.getElementById("studentName");
+  studentName=nameField.value.trim().replace(/\s+/g," ");
+  if(!studentName){
+    alert("Please enter your name before starting.");
+    nameField.focus();
+    return;
+  }
+  started=true;
+  document.getElementById("startButton").disabled=true;
+  questions=shuffle(originalQuestions).map(q=>{
+    const options=shuffle(q.o.map((text,index)=>({text,correct:index===q.a})));
+    return {q:q.q,o:options.map(x=>x.text),a:options.findIndex(x=>x.correct)};
   });
-
   document.getElementById("intro").classList.add("hidden");
   document.getElementById("exam").classList.remove("hidden");
-
   renderQuestions();
-
   document.documentElement.requestFullscreen?.().catch(()=>{});
-
-  timerInterval = setInterval(()=>{
+  timerInterval=setInterval(()=>{
     seconds--;
     updateTimer();
-
-    if(seconds<=0){
-      submitExam(true);
-    }
+    if(seconds<=0)submitExam(true);
   },1000);
 }
 
-function renderQuestions() {
+function renderQuestions(){
   const area=document.getElementById("questions");
   area.innerHTML="";
-
   questions.forEach((q,i)=>{
     const section=document.createElement("div");
     section.className="question";
-
     const title=document.createElement("h3");
     title.textContent=`Question ${i+1}`;
     section.appendChild(title);
-
     const prompt=document.createElement("p");
     prompt.textContent=q.q;
     section.appendChild(prompt);
-
     q.o.forEach((option,j)=>{
       const label=document.createElement("label");
       label.className="option";
-
       const radio=document.createElement("input");
       radio.type="radio";
       radio.name=`q${i}`;
       radio.value=j;
-
-      radio.addEventListener("change",()=>{
-        answers[i]=j;
-      });
-
+      radio.addEventListener("change",()=>{answers[i]=j;});
       label.appendChild(radio);
-      label.appendChild(document.createTextNode(
-        `${String.fromCharCode(65+j)}. ${option}`
-      ));
+      label.appendChild(document.createTextNode(`${String.fromCharCode(65+j)}. ${option}`));
       section.appendChild(label);
     });
-
     area.appendChild(section);
   });
 }
 
 function updateTimer(){
-  const m=Math.floor(seconds/60);
-  const s=seconds%60;
-  document.getElementById("timer").textContent=
-    `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  const m=Math.floor(seconds/60),s=seconds%60;
+  document.getElementById("timer").textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
 
 function recordViolation(reason){
-  if(submitted || !started) return;
-
+  if(submitted||!started)return;
   violations++;
   document.getElementById("violations").textContent=violations;
-  document.getElementById("warning").textContent=
-    `Warning ${violations}/3: ${reason}`;
-
-  if(violations>=3){
-    submitExam(true);
-  }
+  document.getElementById("warning").textContent=`Warning ${violations}/3: ${reason}`;
+  if(violations>=3)submitExam(true);
 }
 
-// Detect leaving the examination tab
 document.addEventListener("visibilitychange",()=>{
-  if(document.hidden){
-    recordViolation("You switched tabs or left the page.");
-  }
+  if(document.hidden)recordViolation("You switched tabs or left the page.");
 });
-
-// Detect exiting full-screen
 document.addEventListener("fullscreenchange",()=>{
-  if(started && !submitted && !document.fullscreenElement){
-    recordViolation("You exited full-screen mode.");
-  }
+  if(started&&!submitted&&!document.fullscreenElement)recordViolation("You exited full-screen mode.");
 });
-
-// Disable common copying actions
 document.addEventListener("contextmenu",e=>e.preventDefault());
-
-["copy","cut","paste"].forEach(event=>{
-  document.addEventListener(event,e=>e.preventDefault());
-});
-
+["copy","cut","paste"].forEach(event=>document.addEventListener(event,e=>e.preventDefault()));
 document.addEventListener("keydown",e=>{
-  if(e.ctrlKey || e.metaKey){
+  if(e.ctrlKey||e.metaKey){
     const key=e.key.toLowerCase();
-    if(["c","v","x","u","s","p"].includes(key)){
-      e.preventDefault();
-    }
+    if(["c","v","x","u","s","p"].includes(key))e.preventDefault();
   }
 });
+
+function saveResult(score){
+  const payload={
+    name:studentName,
+    score:score,
+    total:questions.length,
+    violations:violations,
+    submittedAt:new Date().toISOString()
+  };
+  // no-cors sends a simple cross-origin POST; the browser does not expose
+  // Google's response, so this confirms sending was attempted, not verified.
+  return fetch(SCRIPT_URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(payload)
+  });
+}
 
 function submitExam(auto=false){
-  if(submitted || !started) return;
-
+  if(submitted||!started)return;
+  if(!auto&&!confirm("Are you sure you want to submit?"))return;
   submitted=true;
   clearInterval(timerInterval);
-
-  if(!auto){
-    if(!confirm("Are you sure you want to submit?")){
-      submitted=false;
-      timerInterval=setInterval(()=>{
-        seconds--;
-        updateTimer();
-        if(seconds<=0) submitExam(true);
-      },1000);
-      return;
-    }
-    submitted=true;
-  }
-
   document.getElementById("exam").classList.add("hidden");
   document.getElementById("results").classList.remove("hidden");
-
-  const score=questions.reduce((sum,q,i)=>
-    sum+(answers[i]===q.a?1:0),0);
-
-  document.getElementById("score").textContent=
-    `${score}/10`;
-
-  document.getElementById("message").textContent=
-    auto ? "Your examination was automatically submitted."
-    : "Your examination has been submitted successfully.";
-
-  const review=document.getElementById("review");
-
+  const score=questions.reduce((sum,q,i)=>sum+(answers[i]===q.a?1:0),0);
+  document.getElementById("score").textContent=`${score}/10`;
+  document.getElementById("message").textContent=auto
+    ?"Your examination was automatically submitted."
+    :"Your examination has been submitted.";
+  document.getElementById("review").innerHTML="";
   questions.forEach((q,i)=>{
     const div=document.createElement("div");
     div.className="question";
-
     const result=document.createElement("p");
     result.className=answers[i]===q.a?"correct":"wrong";
-    result.textContent=
-      `Question ${i+1}: ${
-        answers[i]===q.a?"Correct":"Incorrect"
-      }`;
-
+    result.textContent=`Question ${i+1}: ${answers[i]===q.a?"Correct":"Incorrect"}`;
     const correct=document.createElement("p");
-    correct.textContent=
-      `Correct answer: ${String.fromCharCode(65+q.a)}. ${q.o[q.a]}`;
-
+    correct.textContent=`Correct answer: ${String.fromCharCode(65+q.a)}. ${q.o[q.a]}`;
     div.appendChild(result);
     div.appendChild(correct);
-    review.appendChild(div);
+    document.getElementById("review").appendChild(div);
   });
-
-  if(document.fullscreenElement){
-    document.exitFullscreen?.().catch(()=>{});
-  }
+  document.getElementById("saveStatus").textContent="Sending result to the teacher's spreadsheet…";
+  saveResult(score).then(()=>{
+    document.getElementById("saveStatus").textContent=
+      "Submission request sent. Please wait for your teacher to confirm it appears in the spreadsheet.";
+  }).catch(()=>{
+    document.getElementById("saveStatus").textContent=
+      "Could not send the result. Please tell your teacher and try again later.";
+  });
+  if(document.fullscreenElement)document.exitFullscreen?.().catch(()=>{});
 }
 </script>
 </body>
